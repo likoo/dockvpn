@@ -97,6 +97,7 @@ EOF
 [ -f client.http ] || cat >client.http <<EOF
 HTTP/1.0 200 OK
 Content-Type: application/x-openvpn-profile
+Content-Disposition: inline; filename="client.ovpn"
 Content-Length: `wc -c client.ovpn`
 
 `cat client.ovpn`
