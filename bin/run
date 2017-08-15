@@ -29,15 +29,20 @@ cert cert.pem
 dh dh.pem
 
 cipher AES-256-CBC
+cp-disable # for 2.4.x feature to disable automatically negotiate in AES-256-GCM
 auth SHA256
 keysize 256
 
 keepalive 10 60
+
 persist-key
 persist-tun
 push "dhcp-option DNS 8.8.8.8"
 push "dhcp-option DNS 8.8.4.4"
 push "block-outside-dns"
+
+comp-lzo adaptive
+push "comp-lzo adaptive"
 
 proto tcp-server
 port 443
@@ -55,15 +60,22 @@ cert cert.pem
 dh dh.pem
 
 cipher AES-256-CBC
+cp-disable # for 2.4.x feature to disable automatically negotiate in AES-256-GCM
 auth SHA256
 keysize 256
 
-keepalive 10 60
+keepalive 10 120
+tls-timeout 160
+hand-window 160
+
 persist-key
 persist-tun
 push "dhcp-option DNS 8.8.8.8"
 push "dhcp-option DNS 8.8.4.4"
 push "block-outside-dns"
+
+comp-lzo adaptive
+push "comp-lzo adaptive"
 
 proto udp
 port 1194
@@ -87,8 +99,11 @@ dev tun
 redirect-gateway def1
 
 cipher AES-256-CBC
+cp-disable # for 2.4.x feature to disable automatically negotiate in AES-256-GCM
 auth SHA256
 keysize 256
+setenv opt tls-version-min 1.0 or-highest
+tls-client
 
 <key>
 `cat key.pem`
