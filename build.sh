@@ -1,1 +1,1 @@
-docker build  -t naokiro/dockervpn  .
+docker build  -t naokiro/dockvpn -f Dockerfile_alpine .

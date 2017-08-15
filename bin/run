@@ -27,6 +27,11 @@ key key.pem
 ca cert.pem
 cert cert.pem
 dh dh.pem
+
+cipher AES-256-CBC
+auth SHA256
+keysize 256
+
 keepalive 10 60
 persist-key
 persist-tun
@@ -48,6 +53,11 @@ key key.pem
 ca cert.pem
 cert cert.pem
 dh dh.pem
+
+cipher AES-256-CBC
+auth SHA256
+keysize 256
+
 keepalive 10 60
 persist-key
 persist-tun
@@ -68,11 +78,17 @@ MY_IP_ADDR=$(curl -s http://myip.enix.org/REMOTE_ADDR)
     exit 1
 }
 
+######################### client
+
 [ -f client.ovpn ] || cat >client.ovpn <<EOF
 client
 nobind
 dev tun
 redirect-gateway def1
+
+cipher AES-256-CBC
+auth SHA256
+keysize 256
 
 <key>
 `cat key.pem`
