@@ -18,6 +18,8 @@ chmod 600 key.pem
     openssl req -new -key key.pem -out csr.pem -subj /CN=OpenVPN/
 [ -f cert.pem ] ||
     openssl x509 -req -in csr.pem -out cert.pem -signkey key.pem -days 24855
+[ -f ta.key ] ||
+    openvpn --genkey --secret ta.key
 
 [ -f tcp443.conf ] || cat >tcp443.conf <<EOF
 server 192.168.255.0 255.255.255.128
@@ -27,9 +29,11 @@ key key.pem
 ca cert.pem
 cert cert.pem
 dh dh.pem
+tls-auth ta.key
 
+tls-server
 cipher AES-256-CBC
-cp-disable # for 2.4.x feature to disable automatically negotiate in AES-256-GCM
+#cp-disable # for 2.4.x feature to disable automatically negotiate in AES-256-GCM
 auth SHA256
 keysize 256
 
@@ -40,9 +44,6 @@ persist-tun
 push "dhcp-option DNS 8.8.8.8"
 push "dhcp-option DNS 8.8.4.4"
 push "block-outside-dns"
-
-comp-lzo adaptive
-push "comp-lzo adaptive"
 
 proto tcp-server
 port 443
@@ -59,8 +60,10 @@ ca cert.pem
 cert cert.pem
 dh dh.pem
 
+tls-auth ta.key
+tls-server
 cipher AES-256-CBC
-cp-disable # for 2.4.x feature to disable automatically negotiate in AES-256-GCM
+#cp-disable # for 2.4.x feature to disable automatically negotiate in AES-256-GCM
 auth SHA256
 keysize 256
 
@@ -73,9 +76,6 @@ persist-tun
 push "dhcp-option DNS 8.8.8.8"
 push "dhcp-option DNS 8.8.4.4"
 push "block-outside-dns"
-
-comp-lzo adaptive
-push "comp-lzo adaptive"
 
 proto udp
 port 1194
@@ -99,7 +99,7 @@ dev tun
 redirect-gateway def1
 
 cipher AES-256-CBC
-cp-disable # for 2.4.x feature to disable automatically negotiate in AES-256-GCM
+#cp-disable # for 2.4.x feature to disable automatically negotiate in AES-256-GCM
 auth SHA256
 keysize 256
 setenv opt tls-version-min 1.0 or-highest
@@ -117,6 +117,9 @@ tls-client
 <dh>
 `cat dh.pem`
 </dh>
+<tls-auth>
+`cat ta.key`
+</tls-auth>
 
 <connection>
 remote $MY_IP_ADDR 1194 udp
